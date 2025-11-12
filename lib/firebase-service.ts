@@ -77,6 +77,7 @@ export interface Match {
 }
 
 // Mock data for when database is not available - reduced initial load
+// Generate mock donations with timestamps computed at runtime so they don't expire
 const mockDonations: FoodDonation[] = [
   {
     id: '1',
@@ -91,11 +92,13 @@ const mockDonations: FoodDonation[] = [
       lat: 37.7749,
       lng: -122.4194
     },
-    pickupTime: '2024-01-15T18:00:00Z',
-    expiryDate: '2024-01-20T00:00:00Z',
+    // pickup in ~2 hours, expires in ~24 hours
+    pickupTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+    expiryDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     status: 'pending',
-    createdAt: '2024-01-10T10:00:00Z',
-    updatedAt: '2024-01-10T10:00:00Z'
+    // created a few days ago
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '2',
@@ -110,14 +113,36 @@ const mockDonations: FoodDonation[] = [
       lat: 37.7849,
       lng: -122.4094
     },
-    pickupTime: '2024-01-16T19:00:00Z',
-    expiryDate: '2024-01-17T00:00:00Z',
+    // pickup in ~4 hours, expires in ~8 hours
+    pickupTime: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+    expiryDate: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
     status: 'pending',
-    createdAt: '2024-01-11T08:00:00Z',
-    updatedAt: '2024-01-11T08:00:00Z'
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  // Additional mock donation - ready in ~1 hour
+  {
+    id: '3',
+    donorId: 'donor3',
+    donorName: 'Neighborhood Canteen',
+    foodType: 'Cooked Meals',
+    quantity: '60',
+    unit: 'portions',
+    description: 'Daily meal surplus from canteen',
+    location: {
+      address: '789 Market St, Central',
+      lat: 37.7689,
+      lng: -122.4312
+    },
+    pickupTime: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
+    expiryDate: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
+    status: 'pending',
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
   }
 ];
 
+// Generate mock requirements with runtime-relative neededBy and timestamps
 const mockRequirements: FoodRequirement[] = [
   {
     id: '1',
@@ -135,11 +160,12 @@ const mockRequirements: FoodRequirement[] = [
       lat: 37.7649,
       lng: -122.4294
     },
-    neededBy: '2024-01-18T00:00:00Z',
+    // needed in ~48 hours
+    neededBy: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
     servingSize: '150',
     status: 'active',
-    createdAt: '2024-01-12T09:00:00Z',
-    updatedAt: '2024-01-12T09:00:00Z'
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '2',
@@ -157,14 +183,39 @@ const mockRequirements: FoodRequirement[] = [
       lat: 37.7749,
       lng: -122.4194
     },
-    neededBy: '2024-01-20T00:00:00Z',
+    // needed in ~5 days
+    neededBy: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
     servingSize: '100',
     status: 'active',
-    createdAt: '2024-01-13T10:00:00Z',
-    updatedAt: '2024-01-13T10:00:00Z'
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  // Additional mock requirement
+  {
+    id: '3',
+    receiverId: 'receiver3',
+    receiverName: 'Shelter Manager',
+    organizationName: 'Night Shelter',
+    title: 'Emergency Dinner Request',
+    foodType: 'Cooked Meals',
+    quantity: '80',
+    unit: 'portions',
+    urgency: 'high',
+    description: 'Short notice need for dinner service',
+    location: {
+      address: '55 Harbor Rd, Bayside',
+      lat: 37.7600,
+      lng: -122.4350
+    },
+    neededBy: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
+    servingSize: '80',
+    status: 'active',
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()
   }
 ];
 
+// Simple mock matches - timestamps computed at runtime
 const mockMatches: Match[] = [
   {
     id: '1',
@@ -175,8 +226,21 @@ const mockMatches: Match[] = [
     status: 'confirmed',
     distance: 2.5,
     matchScore: 95,
-    createdAt: '2024-01-13T14:00:00Z',
-    updatedAt: '2024-01-13T14:00:00Z'
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  // Additional match record
+  {
+    id: '2',
+    donationId: '3',
+    requirementId: '3',
+    donorId: 'donor3',
+    receiverId: 'receiver3',
+    status: 'pending',
+    distance: 1.2,
+    matchScore: 88,
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()
   }
 ];
 
